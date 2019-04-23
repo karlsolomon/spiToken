@@ -12,7 +12,7 @@ bool m_isInserted = false;
 pthread_t debounceThread;
 
 // Verify token is connected and is of valid type
-static int testToken_GetDeviceTypeTest(void);
+static void testToken_GetDeviceTypeTest(void);
 
 int main(void)
 {
@@ -27,7 +27,7 @@ int main(void)
     {
         uint32_t tick = Timer_GetTick();
         printf("time = %d\n", tick);
-        // testToken_GetDeviceTypeTest();
+        testToken_GetDeviceTypeTest();
         Timer_Sleep(1000);
         if(Timer_TimeoutExpired(startTick, 5000))
         {
@@ -50,10 +50,9 @@ int main(void)
  ******************************************************************************/
 static void testToken_GetDeviceTypeTest(void)
 {
-    // TOKEN_t type = Token_GetDeviceType();
+    TOKEN_t type = Token_GetDeviceType();
     if(type == TOKEN_NONE)
     {
-        errCount++;
         printf("No Token Connected\n");
     }
 }

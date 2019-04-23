@@ -28,7 +28,7 @@
 // Utility Includes
 
 // Driver Includes
-#include "SPI.h"
+#include "spi.h"
 #include "Debounce.h"
 
 
