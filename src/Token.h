@@ -42,7 +42,7 @@
 #define TOKEN_INSERTED              1
 #define TOKEN_UNPROGRAMMED_VALUE    0xFF
 
-#define TOKEN_LOFO_PIN              1
+#define TOKEN_LOFO_PIN              4
 
 /*******************************************************************************
  * Public Declarations

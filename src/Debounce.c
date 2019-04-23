@@ -3,6 +3,7 @@
 #include <wiringPi.h>
 #include "Token.h"
 #include "Timer.h"
+#include <stdio.h>
 #include <sched.h>
 
 extern sem_t g_tokenSem;
@@ -17,8 +18,6 @@ static void debounce_inserting(void);
 // Handles debounce if token is being removed
 static void debounce_removing(void);
 
-
-
 /*******************************************************************************
  * @brief Debounce_Main
  *
@@ -31,17 +30,17 @@ static void debounce_removing(void);
  ******************************************************************************/
 void* Debounce_Main(void* a)
 {
+    printf("Entering Debounce_Main\n");
     while(1)
     {
-        if(digitalRead(TOKEN_LOFO_PIN) && !m_isInserted)
+        if(!digitalRead(LOFO) && !m_isInserted)
         {
             debounce_inserting();
         }
-        else if(!digitalRead(TOKEN_LOFO_PIN) && m_isInserted)
+        else if(digitalRead(LOFO) && m_isInserted)
         {
             debounce_removing();
         }
-        sched_yield();
     }
     return 0;
 }
@@ -58,10 +57,11 @@ void* Debounce_Main(void* a)
  ******************************************************************************/
 static void debounce_inserting(void)
 {
+    printf("inserting\n");
     uint32_t startTime = Timer_GetTick();
     for(uint32_t i = 0; i < DEBOUNCE_TIME_MS; i++)
     {
-        if(!digitalRead(TOKEN_LOFO_PIN))
+        if(digitalRead(LOFO))
         {
             i = 0; // restart debounce
         }
@@ -71,11 +71,16 @@ static void debounce_inserting(void)
         }
         Timer_Sleep(1);
     }
-    if(!Timer_TimeoutExpired(startTime, DEBOUNCE_TIMEOUT) && !digitalRead(TOKEN_LOFO_PIN))
+    if(!Timer_TimeoutExpired(startTime, DEBOUNCE_TIMEOUT) && !digitalRead(LOFO))
     {
         sem_wait(&g_tokenSem);
         m_isInserted = true;
         sem_post(&g_tokenSem);
+	printf("inserted\n");
+    }
+    else
+    {
+        printf("insert failed\n");
     }
 }
 
@@ -91,10 +96,11 @@ static void debounce_inserting(void)
  ******************************************************************************/
 static void debounce_removing(void)
 {
+    printf("removing\n");
     uint32_t startTime = Timer_GetTick();
     for(uint32_t i = 0; i < DEBOUNCE_TIME_MS; i++)
     {
-        if(digitalRead(TOKEN_LOFO_PIN))
+        if(!digitalRead(LOFO))
         {
             i = 0; // restart debounce
         }
@@ -104,10 +110,15 @@ static void debounce_removing(void)
         }
         Timer_Sleep(1);
     }
-    if(!Timer_TimeoutExpired(startTime, DEBOUNCE_TIMEOUT) && digitalRead(TOKEN_LOFO_PIN))
+    if(!Timer_TimeoutExpired(startTime, DEBOUNCE_TIMEOUT) && digitalRead(LOFO))
     {
         sem_wait(&g_tokenSem);
         m_isInserted = false;
         sem_post(&g_tokenSem);
+    	printf("removed\n");
+    }
+    else
+    {
+        printf("remove failed");
     }
 }
