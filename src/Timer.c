@@ -1,7 +1,7 @@
 /*******************************************************************************
- * @file Template.c
+ * @file Timer.c
  *
- * @brief c file from which other c files in this project should be made
+ * @brief Timer 
  *
  * @author KSolomon
  * @date Jun 15, 2018
@@ -13,8 +13,7 @@
  ******************************************************************************/
 
 // System Includes
-#include <sys/time.h>
-#include <stdio.h>
+#include "/usr/include/time.h"
 #include <wiringPi.h>
 
 // Module Includes
@@ -29,12 +28,9 @@
  * Constants Declarations
  ******************************************************************************/
 
-static time_t m_time;
-static time_t m_timeStart;
-static struct tm time;
-static struct tm timeStart;
-static timer_t sysTick;
-struct timerspec timeVal;
+struct timespec timeVal;
+uint64_t startTime = 0;
+
 
 /*******************************************************************************
  * Data Types Declarations
@@ -62,7 +58,9 @@ struct timerspec timeVal;
  ******************************************************************************/
 void Timer_Init(void)
 {
-    timer_create(CLOCK_MONOTONIC, SIGEV_NONE, &sysTick);
+    struct timespec startTimeVal;
+    clock_gettime(CLOCK_MONOTONIC, &startTimeVal);
+    startTime = startTimeVal.tv_sec*1000 + (timeVal.tv_nsec / 1000000);
 }
 
 /*******************************************************************************
@@ -77,8 +75,9 @@ void Timer_Init(void)
  ******************************************************************************/
 uint32_t Timer_GetTick(void)
 {
-    clock_getTime(CLOCK_MONOTONIC, timeVal);
-    return tv_sec*1000 + (tv_nsec * 1000000);
+    clock_gettime(CLOCK_MONOTONIC, &timeVal);
+    uint64_t time = timeVal.tv_sec*1000 + (timeVal.tv_nsec / 1000000);
+    return (uint32_t) time - startTime;
 }
 
 /*******************************************************************************
@@ -111,16 +110,5 @@ void Timer_Sleep(uint32_t mSec)
  ******************************************************************************/
 bool Timer_TimeoutExpired(uint32_t startTime, uint32_t duration)
 {
-    uint32_t m_TimerTimeout = startTime + duration;
-    bool expired = false;
-    uint32_t current = Timer_GetTick();
-    if( current > m_TimerTimeout)
-    {
-        expired = true;
-    }
-    if(m_TimerTimeout < startTime) // overflow
-    {
-        expired = (m_TimerTimeout < startTime) && expired;
-    }
-    return expired;
+    return (Timer_GetTick() - startTime) > duration;
 }
