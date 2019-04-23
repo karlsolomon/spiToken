@@ -75,14 +75,9 @@ static SPI_ErrCode_t spi_readBuf(uint8_t* buf, uint32_t len);
  * @return None
  *
  ******************************************************************************/
-SPI_ErrCode_t SPI_Init(void)
+void SPI_Init(void)
 {
-    SPI_ErrCode_t err = SPI_ERR_OK;
-    int fd = wiringPiSPISetup(SPI_CLOCK_SPEED_HZ);
-    if(fd == SPI_BAD_CONNECTION_FD)
-    {
-        err = SPI_ERR_OK;
-    }
+    int fd = wiringPiSPISetup(SPI_CHANNEL, SPI_CLOCK_SPEED_HZ);
 }
 
 /*******************************************************************************
@@ -356,7 +351,7 @@ static void spi_deselect(void)
 static SPI_ErrCode_t spi_writeBuf(uint8_t* buf, uint32_t len)
 {
     SPI_ErrCode_t err = SPI_ERR_OK;
-    int fd = wiringPiSPIDataRW(buf, (int) len);
+    int fd = wiringPiSPIDataRW(SPI_CHANNEL, buf, (int) len);
     if(fd == SPI_BAD_CONNECTION_FD)
     {
         err = SPI_ERR_GENERAL;
@@ -378,7 +373,7 @@ static SPI_ErrCode_t spi_writeBuf(uint8_t* buf, uint32_t len)
 static SPI_ErrCode_t spi_readBuf(uint8_t* buf, uint32_t len)
 {
     SPI_ErrCode_t err = SPI_ERR_OK;
-    int fd = wiringPiSPIDataRW(buf, (int) len);
+    int fd = wiringPiSPIDataRW(SPI_CHANNEL, buf, (int) len);
     if(fd == SPI_BAD_CONNECTION_FD)
     {
         err = SPI_ERR_GENERAL;

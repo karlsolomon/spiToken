@@ -78,7 +78,9 @@ static bool token_isWriteEnabled(void);
  ******************************************************************************/
 void Token_Init(void)
 {
+    SPI_Init();
 }
+
 
 /*******************************************************************************
  * @brief Token_WriteEnable
@@ -154,7 +156,7 @@ bool Token_WaitUntilReady(void)
 bool Token_WaitUntilReady_time(uint32_t time)
 {
     bool ready = true;
-    uint32_t startTime = Timer0_GetTick();
+    uint32_t startTime = Timer_GetTick();
     while(!token_isReady())
     {
         if(Timer_TimeoutExpired(startTime, time) || !Token_IsInserted())
@@ -233,6 +235,10 @@ TOKEN_t Token_GetDeviceType(void)
             printf("eeprom token\n");
             tokenType = TOKEN_EEPROM;
         }
+    }
+    else
+    {
+        printf("err = %d", err);
     }
     return tokenType;
 }

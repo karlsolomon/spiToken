@@ -18,6 +18,7 @@ int main(void)
 {
     wiringPiSetup();
     Timer_Init();
+    Token_Init();
     pinMode(OUTPUT, SPI_CS_PIN);
     pinMode(INPUT, LOFO);
     sem_init(&g_tokenSem, 1, 1);
@@ -34,6 +35,7 @@ int main(void)
             printf("timeout expired! start = %d, current = %d", startTick, Timer_GetTick());
             startTick = Timer_GetTick();
         }
+	testToken_GetDeviceTypeTest();
     }
     return 0;
 }
