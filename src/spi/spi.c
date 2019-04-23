@@ -34,7 +34,7 @@
 // anything to write
 #define SPI_DUMMY_VALUE             0xA5
 #define SPI_CLOCK_SPEED_HZ          500000
-#define SPI_CS_PIN                  20
+#define SPI_CS_PIN                  17
 
 #define SPI_BAD_CONNECTION_FD       ((int) -1)
 
