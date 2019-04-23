@@ -43,15 +43,10 @@
  * Data Types Declarations
  ******************************************************************************/
 
-static SPI_TypeDef* spi_ports[SPI_PORT_COUNT];
-
 
 /*******************************************************************************
  * Private Function Prototypes
  ******************************************************************************/
-
-// Convert SPI port to SPI typedef
-static SPI_TypeDef* spi_portToSPI(void);
 
 // Enable Slave
 static void spi_select(void);
@@ -73,8 +68,7 @@ static SPI_ErrCode_t spi_readBuf(uint8_t* buf, uint32_t len);
 /*******************************************************************************
  * @brief SPI_Init
  *
- * Initialized the SPI Port given. Internally specifies if this is a slave or
- * a master port
+ * Initialized the SPI Port
  *
  * @param   > None
  *
@@ -148,7 +142,7 @@ SPI_ErrCode_t SPI_Write2(uint8_t* buf1, uint32_t len1, \
 }
 
 /*******************************************************************************
- * @brief SPI_write3
+ * @brief SPI_Write3
  *
  * Writes 3 bufs to the SPI slave.
  *
@@ -162,7 +156,7 @@ SPI_ErrCode_t SPI_Write2(uint8_t* buf1, uint32_t len1, \
  * @return SPI_ErrCode_t
  *
  ******************************************************************************/
-SPI_ErrCode_t SPI_write3(uint8_t* buf1, uint32_t len1, \
+SPI_ErrCode_t SPI_Write3(uint8_t* buf1, uint32_t len1, \
     uint8_t* buf2, uint32_t len2, uint8_t* buf3, uint32_t len3)
 {
     SPI_ErrCode_t err = SPI_ERR_INVALID_INPUT;
@@ -185,7 +179,7 @@ SPI_ErrCode_t SPI_write3(uint8_t* buf1, uint32_t len1, \
 }
 
 /*******************************************************************************
- * @brief SPI_read
+ * @brief SPI_Read
  *
  * Reads len bytes into buf from the SPI slave.
  *
@@ -195,7 +189,7 @@ SPI_ErrCode_t SPI_write3(uint8_t* buf1, uint32_t len1, \
  * @return SPI_ErrCode_t
  *
  ******************************************************************************/
-SPI_ErrCode_t SPI_read(uint8_t* buf, uint32_t len)
+SPI_ErrCode_t SPI_Read(uint8_t* buf, uint32_t len)
 {
     SPI_ErrCode_t err = SPI_ERR_INVALID_INPUT;
     if((buf != NULL) && (len > 0))
@@ -209,7 +203,7 @@ SPI_ErrCode_t SPI_read(uint8_t* buf, uint32_t len)
 }
 
 /*******************************************************************************
- * @brief SPI_read2
+ * @brief SPI_Read2
  *
  * Reads in 2 buffers
  *
@@ -221,7 +215,7 @@ SPI_ErrCode_t SPI_read(uint8_t* buf, uint32_t len)
  * @return SPI_ErrCode_t
  *
  ******************************************************************************/
-SPI_ErrCode_t SPI_read2(uint8_t* buf1, uint32_t len1, \
+SPI_ErrCode_t SPI_Read2(uint8_t* buf1, uint32_t len1, \
     uint8_t* buf2, uint32_t len2)
 {
     SPI_ErrCode_t err = SPI_ERR_INVALID_INPUT;
@@ -240,7 +234,7 @@ SPI_ErrCode_t SPI_read2(uint8_t* buf1, uint32_t len1, \
 }
 
 /*******************************************************************************
- * @brief SPI_writeRead
+ * @brief SPI_WriteRead
  *
  * Reads in 2 buffers
  *
@@ -252,7 +246,7 @@ SPI_ErrCode_t SPI_read2(uint8_t* buf1, uint32_t len1, \
  * @return SPI_ErrCode_t
  *
  ******************************************************************************/
-SPI_ErrCode_t SPI_writeRead(uint8_t* bufWrite, \
+SPI_ErrCode_t SPI_WriteRead(uint8_t* bufWrite, \
     uint32_t lenWrite, uint8_t* bufRead, uint32_t lenRead)
 {
     SPI_ErrCode_t err = SPI_ERR_OK;
@@ -275,7 +269,7 @@ SPI_ErrCode_t SPI_writeRead(uint8_t* bufWrite, \
 }
 
 /*******************************************************************************
- * @brief SPI_write2Read
+ * @brief SPI_Write2Read
  *
  * Reads in 2 buffers
  *
@@ -287,7 +281,7 @@ SPI_ErrCode_t SPI_writeRead(uint8_t* bufWrite, \
  * @return SPI_ErrCode_t
  *
  ******************************************************************************/
-SPI_ErrCode_t SPI_write2Read(uint8_t* bufWrite1,\
+SPI_ErrCode_t SPI_Write2Read(uint8_t* bufWrite1,\
     uint32_t lenWrite1, uint8_t* bufWrite2, uint32_t lenWrite2, uint8_t* bufRead, uint32_t lenRead)
 {
     SPI_ErrCode_t err = SPI_ERR_OK;
@@ -349,7 +343,7 @@ static void spi_deselect(void)
 }
 
 /*******************************************************************************
- * @brief SPI_writeBuf
+ * @brief SPI_WriteBuf
  *
  * Write Buffer to SPI
  *
@@ -371,7 +365,7 @@ static SPI_ErrCode_t spi_writeBuf(uint8_t* buf, uint32_t len)
 }
 
 /*******************************************************************************
- * @brief SPI_readBuf
+ * @brief SPI_ReadBuf
  *
  * Read Buffer from SPI
  *

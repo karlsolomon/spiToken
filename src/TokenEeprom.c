@@ -173,7 +173,7 @@ TOKEN_ErrCode_t TokenEeprom_Read(uint32_t address, uint8_t* buf, uint32_t len)
     {
         uint8_t instruction[TOKEN_EEPROM_INSTRUCTION_SIZE];
         tokenEeprom_getInstruction(instruction, address, TOKEN_OPCODE_READ);
-        err = (TOKEN_ErrCode_t) SPI_writeRead(TOKEN_SPI_PORT, instruction, sizeof(instruction), buf, len);
+        err = (TOKEN_ErrCode_t) SPI_WriteRead(instruction, sizeof(instruction), buf, len);
     }
     return err;
 }
@@ -270,7 +270,7 @@ static TOKEN_ErrCode_t tokenEeprom_writePage(uint32_t address, uint8_t* buf, uin
         Token_WriteEnable();
         uint8_t instruction[TOKEN_EEPROM_INSTRUCTION_SIZE];
         tokenEeprom_getInstruction(instruction, address, TOKEN_OPCODE_WRITE);
-        err = (TOKEN_ErrCode_t) SPI_write2(TOKEN_SPI_PORT, instruction, sizeof(instruction), buf, bufLen);
+        err = (TOKEN_ErrCode_t) SPI_Write2(instruction, sizeof(instruction), buf, bufLen);
     }
     return err;
 }

@@ -39,6 +39,9 @@
 #define TOKEN_READY_BIT                         0x01
 #define TOKEN_WREN_BIT                          0x02
 
+extern bool m_isInserted;
+extern sem_t g_tokenSem;
+
 
 /*******************************************************************************
  * Data Types Declarations
@@ -93,7 +96,7 @@ TOKEN_ErrCode_t Token_WriteEnable(void)
     if(Token_WaitUntilReady())
     {
         uint8_t opCode = (uint8_t) TOKEN_OPCODE_WRITE_ENABLE;
-        err = (TOKEN_ErrCode_t) SPI_Write(TOKEN_SPI_PORT, &opCode, 1);
+        err = (TOKEN_ErrCode_t) SPI_Write(&opCode, 1);
     }
     else
     {
@@ -180,7 +183,7 @@ TOKEN_ErrCode_t Token_WriteStatusRegister(uint8_t sr)
     {
         uint8_t opCode = TOKEN_OPCODE_WRITE_SR;
         uint8_t instr[2] = {opCode, sr};
-        err = (TOKEN_ErrCode_t) SPI_Write(TOKEN_SPI_PORT, instr, sizeof(instr));
+        err = (TOKEN_ErrCode_t) SPI_Write(instr, sizeof(instr));
     }
     return err;
 }
@@ -199,7 +202,7 @@ uint8_t Token_ReadStatusRegister(void)
 {
     uint8_t statusRegister = 0;
     uint8_t opcode = TOKEN_OPCODE_READ_SR;
-    SPI_WriteRead(TOKEN_SPI_PORT, &opcode, 1, &statusRegister, 1);
+    SPI_WriteRead(&opcode, 1, &statusRegister, 1);
     return statusRegister;
 }
 
@@ -252,7 +255,7 @@ TOKEN_t Token_GetDeviceType(void)
 static void token_writeDisable(void)
 {
     uint8_t opCode = (uint8_t) TOKEN_OPCODE_WRITE_DISABLE;
-    SPI_Write(TOKEN_SPI_PORT, &opCode, 1);
+    SPI_Write(&opCode, 1);
 }
 
 /*******************************************************************************
