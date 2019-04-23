@@ -1,2 +1,2 @@
-tok: main.c Timer.c
-	gcc -o tok main.c Timer.c -lwiringPi -lrt -I .
+tok: main.c Timer.c Debounce.c
+	gcc -o tok main.c Timer.c Debounce.c -lwiringPi -lrt -lpthread -I .

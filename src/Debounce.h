@@ -1,3 +1,4 @@
 
 // Run Debounce thread
-void Debounce_Main(void);
+void* Debounce_Main(void* a);
+

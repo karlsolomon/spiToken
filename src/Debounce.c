@@ -3,7 +3,7 @@
 #include <wiringPi.h>
 #include "Token.h"
 #include "Timer.h"
-#include <pthread.h>
+#include <sched.h>
 
 extern sem_t g_tokenSem;
 extern bool m_isInserted;
@@ -29,7 +29,7 @@ static void debounce_removing(void);
  * @return None
  *
  ******************************************************************************/
-void Debounce_Main(void)
+void* Debounce_Main(void* a)
 {
     while(1)
     {
@@ -41,8 +41,9 @@ void Debounce_Main(void)
         {
             debounce_removing();
         }
-        pthread_yield();
+        sched_yield();
     }
+    return 0;
 }
 
 /*******************************************************************************
