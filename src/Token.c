@@ -39,10 +39,6 @@
 #define TOKEN_READY_BIT                         0x01
 #define TOKEN_WREN_BIT                          0x02
 
-sem_t g_tokenSem;
-bool m_isInserted = false;
-pthread_t debounceThread;
-
 
 /*******************************************************************************
  * Data Types Declarations
@@ -79,14 +75,6 @@ static bool token_isWriteEnabled(void);
  ******************************************************************************/
 void Token_Init(void)
 {
-    sem_init(&g_tokenSem, 1, 1);
-    if(!digitalRead(TOKEN_LOFO_PIN))
-    {
-        sem_wait(&g_tokenSem);
-        m_isInserted = true;
-        sem_post(&g_tokenSem);
-    }
-    pthread_create(&debounceThread, NULL, Debounce_Main, NULL);
 }
 
 /*******************************************************************************
@@ -235,9 +223,11 @@ TOKEN_t Token_GetDeviceType(void)
         if(size != 0)
         {
             tokenType = TOKEN_FLASH;
+            printf("flash token size = %d\n", size);
         }
         else
         {
+            printf("eeprom token\n");
             tokenType = TOKEN_EEPROM;
         }
     }

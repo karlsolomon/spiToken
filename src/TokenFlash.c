@@ -14,6 +14,7 @@
  ******************************************************************************/
 
 // System Includes
+#include "TypeDefs.h"
 
 // Module Includes
 #include "TokenFlash.h"
@@ -22,7 +23,7 @@
 // Utility Includes
 
 // Driver Includes
-#include "SPI.h"
+#include "spi.h"
 
 
 /*******************************************************************************
@@ -100,7 +101,7 @@ TOKEN_ErrCode_t TokenFlash_EraseAll(void)
 {
     TOKEN_ErrCode_t err = Token_WriteEnable();
     uint8_t opCode = TOKEN_OPCODE_FLASH_CHIP_ERASE;
-    err = (TOKEN_ErrCode_t) SPI_write(TOKEN_SPI_PORT, &opCode, sizeof(uint8_t));
+    err = (TOKEN_ErrCode_t) SPI_write(&opCode, sizeof(uint8_t));
     return err;
 }
 
@@ -194,7 +195,7 @@ TOKEN_ErrCode_t TokenFlash_Read(uint32_t address, uint8_t* buf, uint32_t len)
         {
             uint8_t instruction[TOKEN_FLASH_INSTRUCTION_SIZE];
             tokenFlash_getInstruction(instruction, address, TOKEN_OPCODE_READ);
-            err = (TOKEN_ErrCode_t) SPI_writeRead(TOKEN_SPI_PORT, instruction, TOKEN_FLASH_INSTRUCTION_SIZE, buf, len);
+            err = (TOKEN_ErrCode_t) SPI_writeRead(instruction, TOKEN_FLASH_INSTRUCTION_SIZE, buf, len);
         }
         else
         {
@@ -266,7 +267,7 @@ TOKEN_ErrCode_t TokenFlash_GetDeviceSize(uint32_t* size)
         uint8_t signature = 0;
         uint8_t instruction[TOKEN_FLASH_INSTRUCTION_SIZE];
         tokenFlash_getInstruction(instruction, 0, TOKEN_OPCODE_FLASH_READ_E_SIGNATURE);
-        err = (TOKEN_ErrCode_t) SPI_writeRead(TOKEN_SPI_PORT, instruction, TOKEN_FLASH_INSTRUCTION_SIZE, &signature, sizeof(uint8_t));
+        err = (TOKEN_ErrCode_t) SPI_writeRead(instruction, TOKEN_FLASH_INSTRUCTION_SIZE, &signature, sizeof(uint8_t));
         if(signature != 0)
         {
             signature &= 0x0F;
@@ -300,7 +301,7 @@ static TOKEN_ErrCode_t tokenFlash_eraseSector(uint32_t address)
     {
         uint8_t instruction[TOKEN_FLASH_INSTRUCTION_SIZE];
         tokenFlash_getInstruction(instruction, address, TOKEN_OPCODE_FLASH_SECTOR_ERASE);
-        err = (TOKEN_ErrCode_t) SPI_write(TOKEN_SPI_PORT, instruction, sizeof(uint32_t));
+        err = (TOKEN_ErrCode_t) SPI_write(instruction, sizeof(uint32_t));
     }
     return err;
 }
@@ -343,7 +344,7 @@ static TOKEN_ErrCode_t tokenFlash_writePage(uint32_t address, uint8_t* buf, uint
     {
         uint8_t instruction[TOKEN_FLASH_INSTRUCTION_SIZE];
         tokenFlash_getInstruction(instruction, address, TOKEN_OPCODE_WRITE);
-        err = (TOKEN_ErrCode_t) SPI_write2(TOKEN_SPI_PORT, instruction, sizeof(instruction), buf, bufLen);
+        err = (TOKEN_ErrCode_t) SPI_write2(instruction, sizeof(instruction), buf, bufLen);
     }
     return err;
 }

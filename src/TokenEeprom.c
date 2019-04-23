@@ -14,17 +14,16 @@
  ******************************************************************************/
 
 // System Includes
+#include "TypeDefs.h"
 
 // Module Includes
 #include "Token.h"
 #include "TokenEeprom.h"
 
 // Utility Includes
-#include "Config.h"
 
 // Driver Includes
-#include "SPI.h"
-#include "Debug.h"
+#include "spi.h"
 #include "Timer.h"
 
 
