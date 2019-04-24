@@ -7,6 +7,20 @@
 #include <wiringPi.h>
 #include "TypeDefs.h"
 #include "test.h"
+#include "TokenFlash.h"
+
+#define TEST_TOKEN_RW_SIZE    256
+
+#define TOK_F_WRITE             ((WriteAndVerifyHook) TokenFlash_Write)
+#define TOK_F_ERASE             ((EraseHook) TokenFlash_Erase)
+#define TOK_F_READ              ((WriteAndVerifyHook) TokenFlash_Read)
+
+#define TEST_TOKEN_START_ADDR   0
+
+
+
+static TOKEN_t m_tokenType = TOKEN_NONE;
+
 
 sem_t g_tokenSem;
 bool m_isInserted = false;
@@ -14,6 +28,13 @@ pthread_t debounceThread;
 
 // Verify token is connected and is of valid type
 static void testToken_GetDeviceTypeTest(void);
+
+// Verify token can read
+static void testToken_flash_readTest(void);
+
+// Verify token can write
+static int testToken_flash_writeTest(void);
+
 
 int main(void)
 {
