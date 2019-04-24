@@ -15,11 +15,8 @@
 #define TOK_F_READ              ((WriteAndVerifyHook) TokenFlash_Read)
 #define TEST_TOKEN_START_ADDR   0
 
-static TOKEN_t m_tokenType = TOKEN_NONE;
-
-sem_t g_tokenSem;
-bool m_isInserted = false;
-pthread_t debounceThread;
+extern sem_t g_tokenSem;
+extern bool m_isInserted = false;
 
 // Verify token is connected and is of valid type
 static void testToken_GetDeviceTypeTest(void);
@@ -45,16 +42,19 @@ static void testToken_flash_eraseChipTest(void);
 // Verify token can protect all region combinations
 static void testToken_flash_protectTest(void);
 
+/*******************************************************************************
+ * @brief main
+ *
+ * Run main
+ *
+ * @param  None
+ *
+ * @return int
+ *
+ ******************************************************************************/
 int main(void)
 {
-    wiringPiSetup();
-    Timer_Init();
     Token_Init();
-    pinMode(OUTPUT, SPI_CS_PIN);
-    pinMode(INPUT, LOFO);
-    sem_init(&g_tokenSem, 1, 1);
-    pthread_create(&debounceThread, NULL, Debounce_Main, NULL);
-    Timer_Sleep(2000);
     uint32_t startTick = Timer_GetTick();
     uint32_t tick = Timer_GetTick();
     printf("time = %d\n", tick);    
@@ -284,7 +284,7 @@ static void testToken_flash_protectTest(void)
     for(uint8_t i = 0; i < (uint8_t) TOKEN_FLASH_PROTECT_COUNT; i++)
     {
         err = TokenFlash_ProtectRegion((TOKEN_FlashProtect_t) i);
-	Timer_Sleep(10);
+	Timer_Sleep(TIMER_10MS);
 	protectedRegion = (uint8_t) TokenFlash_GetProtectedRegion();
         if(i != protectedRegion)
         {

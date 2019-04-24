@@ -29,6 +29,7 @@
 // Driver Includes
 #include "spi.h"
 #include "Debounce.h"
+#include "Timer.h"
 
 
 /*******************************************************************************
@@ -38,8 +39,9 @@
 #define TOKEN_READY_BIT                         0x01
 #define TOKEN_WREN_BIT                          0x02
 
-extern bool m_isInserted;
-extern sem_t g_tokenSem;
+sem_t g_tokenSem;
+bool m_isInserted = false;
+pthread_t debounceThread;
 
 
 /*******************************************************************************
@@ -76,8 +78,15 @@ static bool token_isWriteEnabled(void);
  *
  ******************************************************************************/
 void Token_Init(void)
-{
-    SPI_Init();
+{    
+    wiringPiSetup();
+    Timer_Init();
+    SPI_Init();    
+    pthread_create(&debounceThread, NULL, Debounce_Main, NULL);
+    Timer_Sleep(TIMER_1SEC); // recognize if token is inserted @ startup
+    pinMode(OUTPUT, SPI_CS_PIN);
+    pinMode(INPUT, LOFO);
+    sem_init(&g_tokenSem, 1, 1);
 }
 
 

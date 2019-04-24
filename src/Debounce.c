@@ -9,8 +9,8 @@
 extern sem_t g_tokenSem;
 extern bool m_isInserted;
 
-#define DEBOUNCE_TIME_MS 50
-#define DEBOUNCE_TIMEOUT 200
+#define DEBOUNCE_TIME_MS TIMER_50MS
+#define DEBOUNCE_TIMEOUT TIMER_200
 
 // Writes new status register
 static void debounce_inserting(void);
@@ -69,7 +69,7 @@ static void debounce_inserting(void)
         {
             break;
         }
-        Timer_Sleep(1);
+        Timer_Sleep(TIMER_1MS);
     }
     if(!Timer_TimeoutExpired(startTime, DEBOUNCE_TIMEOUT) && !digitalRead(LOFO))
     {
@@ -108,7 +108,7 @@ static void debounce_removing(void)
         {
             break;
         }
-        Timer_Sleep(1);
+        Timer_Sleep(TIMER_1MS);
     }
     if(!Timer_TimeoutExpired(startTime, DEBOUNCE_TIMEOUT) && digitalRead(LOFO))
     {
