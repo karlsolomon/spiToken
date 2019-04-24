@@ -117,7 +117,7 @@ bool Test_WriteAndVerify(WriteAndVerifyHook write, WriteAndVerifyHook read, uint
                 passed = false;
                 if(TEST_DEBUG_FULL)
                 {
-                    printf("Failed Verify at addr 0x%08X\n", addr);
+                    printf("Failed Verify Write at addr 0x%08X\n", addr);
                 }
                 break;
             }
@@ -175,7 +175,7 @@ bool Test_Verify(WriteAndVerifyHook read, uint32_t addr, uint8_t* expectedBuf, u
             passed = false;
             if(TEST_DEBUG_FULL)
             {
-                printf("\tFailed Verify at addr 0x%08X\n", addr);
+                printf("Failed Verify at addr 0x%08X\n", addr);
             }
             break;
         }
@@ -238,7 +238,7 @@ bool Test_VerifyErased(WriteAndVerifyHook read, uint32_t addr, uint32_t len)
             passed = false;
             if(TEST_DEBUG_FULL)
             {
-                printf("Failed Verify at addr 0x%08X\n", addr);
+                printf("Failed Verify Erase at addr 0x%08X\n", addr);
             }
             break;
         }
