@@ -67,41 +67,41 @@ int main(void)
     {
         testToken_GetDeviceTypeTest();
         tick = Timer_GetTick();
-        printf("elapsedTime = %d\n", tick - startTick);
+        printf("elapsedTime = %d GetDeviceType\n", tick - startTick);
 
         testToken_flash_readTest();
         tick = Timer_GetTick();
-        printf("elapsedTime = %d\n", tick - startTick);
+        printf("elapsedTime = %d Read\n", tick - startTick);
         startTick = tick;
 
         testToken_flash_writeTest();
         tick = Timer_GetTick();
-        printf("elapsedTime = %d\n", tick - startTick);
-        startTick = tick;
-
-        testToken_flash_writeAll();
-        tick = Timer_GetTick();
-        printf("elapsedTime = %d\n", tick - startTick);
+        printf("elapsedTime = %d Write\n", tick - startTick);
         startTick = tick;
 
         testToken_flash_eraseTest();
         tick = Timer_GetTick();
-        printf("elapsedTime = %d\n", tick - startTick);
-        startTick = tick;
-
-        testToken_flash_eraseAllTest();
-        tick = Timer_GetTick();
-        printf("elapsedTime = %d\n", tick - startTick);
-        startTick = tick;
-
-        testToken_flash_eraseChipTest();
-        tick = Timer_GetTick();
-        printf("elapsedTime = %d\n", tick - startTick);
+        printf("elapsedTime = %d Erase\n", tick - startTick);
         startTick = tick;
 
         testToken_flash_protectTest();
         tick = Timer_GetTick();
-        printf("elapsedTime = %d\n", tick - startTick);
+        printf("elapsedTime = %d Protect\n", tick - startTick);
+        startTick = tick;
+
+        testToken_flash_writeAll();
+        tick = Timer_GetTick();
+        printf("elapsedTime = %d WriteAll\n", tick - startTick);
+        startTick = tick;
+
+        testToken_flash_eraseAllTest();
+        tick = Timer_GetTick();
+        printf("elapsedTime = %d EraseAll\n", tick - startTick);
+        startTick = tick;
+
+        testToken_flash_eraseChipTest();
+        tick = Timer_GetTick();
+        printf("elapsedTime = %d EraseChip \n", tick - startTick);
         startTick = tick;
     }
     return 0;
@@ -142,7 +142,7 @@ static void testToken_flash_readTest(void)
     TOKEN_ErrCode_t err = (TOKEN_ErrCode_t) TokenFlash_Read(TEST_TOKEN_START_ADDR, tmpReadBuffer, TOKEN_FLASH_PAGE_LEN);
     if(err != TOKEN_ERR_OK)
     {
-        printf("err = %d. Read failed\n", err);
+        printf("err = %d. testToken_flash_readTest failed\n", err);
     }
     else
     {
@@ -165,7 +165,7 @@ static void testToken_flash_writeTest(void)
     TOKEN_ErrCode_t err = TokenFlash_Erase(TEST_TOKEN_START_ADDR, TOKEN_FLASH_SECTOR_LEN);
     if(!Test_WriteAndVerify(TOK_F_WRITE, TOK_F_READ, TEST_TOKEN_START_ADDR, TOKEN_FLASH_SECTOR_LEN))
     {
-        printf("err = %d. Verify failed\n", err);
+        printf("err = %d. testToken_flash_writeTest failed\n", err);
     }
     TOK_F_ERASE(TEST_TOKEN_START_ADDR, TOKEN_FLASH_SECTOR_LEN);
 }
@@ -185,7 +185,7 @@ static void testToken_flash_writeAll(void)
     TOKEN_ErrCode_t err = TokenFlash_Erase(0, TOKEN_FLASH_MEM_SIZE);
     if(!Test_WriteAndVerify(TOK_F_WRITE, TOK_F_READ, 0, TOKEN_FLASH_MEM_SIZE))
     {
-        printf("err = %d. Verify failed\n", err);
+        printf("err = %d. testToken_flash_writeAll failed\n", err);
     }
     TOK_F_ERASE(0, TOKEN_FLASH_MEM_SIZE);
 }
@@ -205,11 +205,11 @@ static void testToken_flash_eraseTest(void)
     TOKEN_ErrCode_t err = TokenFlash_Erase(TEST_TOKEN_START_ADDR, TOKEN_FLASH_SECTOR_LEN);
     if(err != TOKEN_ERR_OK)
     {
-        printf("err = %d. Erase failed\n", err);
+        printf("err = %d. testToken_flash_eraseTest erase failed\n", err);
     }
     else if(!Test_VerifyErased(TOK_F_READ, TEST_TOKEN_START_ADDR, TOKEN_FLASH_SECTOR_LEN))
     {
-        printf("err = %d. Verify failed\n", err);
+        printf("err = %d. testToken_flash_eraseTest verify failed\n", err);
     }
     else
     {
@@ -232,11 +232,11 @@ static void testToken_flash_eraseAllTest(void)
     TOKEN_ErrCode_t err = TokenFlash_Erase(TEST_TOKEN_START_ADDR, TOKEN_FLASH_MEM_SIZE);
     if(err != TOKEN_ERR_OK)
     {
-        printf("err = %d\n", err);
+        printf("err = %d. testToken_flash_eraseAllTest erase failed \n", err);
     }
     else if(!Test_VerifyErased(TOK_F_READ, 0, TOKEN_FLASH_MEM_SIZE))
     {
-        printf("err = %d. Verify failed\n", err);
+        printf("err = %d. testToken_flash_eraseAllTest verify failed\n", err);
     }
     else
     {
@@ -260,11 +260,11 @@ static void testToken_flash_eraseChipTest(void)
     Timer_Sleep(TOKEN_FLASH_ERASE_ALL_TIME);
     if(err != TOKEN_ERR_OK)
     {
-        printf("err = %d\n", err);
+        printf("err = %d. testToken_flash_eraseChipTest erase failed\n", err);
     }
     else if(!Test_VerifyErased(TOK_F_READ, 0, TOKEN_FLASH_MEM_SIZE))
     {
-        printf("err = %d. Verify failed\n", err);
+        printf("err = %d. testToken_flash_eraseChipTest verify failed\n", err);
     }
     else
     {
