@@ -36,7 +36,7 @@
 
 #define TEST_MANUAL_TIMEOUT         Timer_10MIN
 #define TEST_BUFFER_SIZE            256
-#define TEST_RETRY_CNT              2
+#define TEST_RETRY_CNT              3
 
 static uint8_t m_bufWrite[TEST_BUFFER_SIZE];
 static uint8_t m_bufRead[TEST_BUFFER_SIZE];
@@ -90,41 +90,46 @@ bool Test_WriteAndVerify(WriteAndVerifyHook write, WriteAndVerifyHook read, uint
     while(len > 0)
     {
         currentLen = MIN(TEST_BUFFER_SIZE, len);
-        writeResult = write(addr, m_bufWrite, currentLen);
-        if(writeResult)
+        for(uint8_t i = 0; i < TEST_RETRY_CNT; i++)
         {
-            passed = false;
-            if(TEST_DEBUG_FULL)
-            {
-                printf("Failed Write at addr 0x%08X. Err code = %d\n", addr, writeResult);
-            }
-            break;
-        }
-        else
-        {
-            readResult = read(addr, m_bufRead, currentLen);
-            if(readResult)
+            writeResult = write(addr, m_bufWrite, currentLen);
+            if(writeResult)
             {
                 passed = false;
                 if(TEST_DEBUG_FULL)
                 {
-                    printf("Failed Read at addr 0x%08X. Err code = %d\n", addr, readResult);
-                }
-                break;
-            }
-            else if(memcmp(m_bufWrite, m_bufRead, currentLen))
-            {
-                passed = false;
-                if(TEST_DEBUG_FULL)
-                {
-                    printf("Failed Verify Write at addr 0x%08X\n", addr);
+                    printf("Failed Write at addr 0x%08X. Err code = %d\n", addr, writeResult);
                 }
                 break;
             }
             else
             {
-                len -= currentLen;
-                addr += currentLen;
+                readResult = read(addr, m_bufRead, currentLen);
+                if(readResult)
+                {
+                    passed = false;
+                    if(TEST_DEBUG_FULL)
+                    {
+                        printf("Failed Read at addr 0x%08X. Err code = %d\n", addr, readResult);
+                    }
+                    break;
+                }
+                else if(memcmp(m_bufWrite, m_bufRead, currentLen))
+                {
+                    passed = false;
+                    if(TEST_DEBUG_FULL)
+                    {
+                        printf("Failed Verify Write at addr 0x%08X\n", addr);
+                    }
+                    break;
+                }
+                else
+                {
+                    passed = true;
+                    len -= currentLen;
+                    addr += currentLen;
+                    break;
+                }
             }
         }
     }
@@ -160,29 +165,34 @@ bool Test_Verify(WriteAndVerifyHook read, uint32_t addr, uint8_t* expectedBuf, u
     while(len > 0)
     {
         currentLen = MIN(bufLen, len);
-        readResult = read(addr, m_bufRead, currentLen);
-        if(readResult)
+        for(uint8_t i = 0; i < TEST_RETRY_CNT; i++)
         {
-            passed = false;
-            if(TEST_DEBUG_FULL)
+            readResult = read(addr, m_bufRead, currentLen);
+            if(readResult)
             {
-                printf("\tFailed Read at addr 0x%08X. Err code = %d\n", addr, readResult);
+                passed = false;
+                if(TEST_DEBUG_FULL)
+                {
+                    printf("\tFailed Read at addr 0x%08X. Err code = %d\n", addr, readResult);
+                }
+                break;
             }
-            break;
-        }
-        else if(memcmp(expectedBuf, m_bufRead, currentLen))
-        {
-            passed = false;
-            if(TEST_DEBUG_FULL)
+            else if(memcmp(expectedBuf, m_bufRead, currentLen))
             {
-                printf("Failed Verify at addr 0x%08X\n", addr);
+                passed = false;
+                if(TEST_DEBUG_FULL)
+                {
+                    printf("Failed Verify at addr 0x%08X\n", addr);
+                }
+                break;
             }
-            break;
-        }
-        else
-        {
-            len -= currentLen;
-            addr += currentLen;
+            else
+            {
+                passed = true;
+                len -= currentLen;
+                addr += currentLen;
+                break;
+            }
         }
     }
     if(passed)
@@ -223,89 +233,39 @@ bool Test_VerifyErased(WriteAndVerifyHook read, uint32_t addr, uint32_t len)
     while(len > 0)
     {
         currentLen = MIN(TEST_BUFFER_SIZE, len);
-        readResult = read(addr, m_bufRead, currentLen);
-        Timer_Sleep(30);
-        if(readResult)
+        for(uint8_t i = 0; i < TEST_RETRY_CNT; i++)
         {
-            passed = false;
-            if(TEST_DEBUG_FULL)
+            readResult = read(addr, m_bufRead, currentLen);
+            if(readResult)
             {
-                printf("Failed Read at addr 0x%08X. Err code = %d\n", addr, readResult);
+                passed = false;
+                if(TEST_DEBUG_FULL)
+                {
+                    printf("Failed Read at addr 0x%08X. Err code = %d\n", addr, readResult);
+                }
+                break;
             }
-            break;
-        }
-        else if(memcmp(m_bufErase, m_bufRead, currentLen))
-        {
-            passed = false;
-            if(TEST_DEBUG_FULL)
+            else if(memcmp(m_bufErase, m_bufRead, currentLen))
             {
-                printf("Failed Verify Erase at addr 0x%08X\n", addr);
+                passed = false;
+                if(TEST_DEBUG_FULL)
+                {
+                    printf("Failed Verify Erase at addr 0x%08X\n", addr);
+                }
+                break;
             }
-            break;
-        }
-        else
-        {
-            len -= currentLen;
-            addr += currentLen;
+            else
+            {
+                passed = true;
+                len -= currentLen;
+                addr += currentLen;
+                break;
+            }
         }
     }
     if(passed)
     {
         printf("passed verifyErase from 0x%08X to 0x%08X\n", startAddr, addr);
-    }
-    return passed;
-}
-
-
-/*******************************************************************************
- * @brief Test_ReadAndPrint
- *
- * Wrapper to Read and Print a peripheral's memory
- *
- * @param   > WriteAndVerifyHook: read function call
- *          > uint32_t: address to start from
- *          > uint8_t*: buffer to read into
- *          > uint32_t: length of buffer
- *          > uint32_t: length to read/print
- *
- * @return bool: true if read passed, false otherwise
- *
- ******************************************************************************/
-bool Test_ReadAndPrint(WriteAndVerifyHook read, uint32_t addr, uint32_t len)
-{
-    bool passed = true;
-    uint32_t currentLen = 0;
-    uint8_t readFailed = 0;
-    uint32_t startAddr = addr;
-    while(len > 0)
-    {
-        currentLen = MIN(TEST_BUFFER_SIZE, len);
-        readFailed = read(addr, m_bufRead, currentLen);
-        Timer_Sleep(30);
-        if(readFailed)
-        {
-            passed = false;
-            if(TEST_DEBUG_FULL)
-            {
-                printf("Failed Read at addr 0x%08X. Err code = %d\n", addr, readFailed);
-            }
-            break;
-        }
-        else
-        {
-            printf("Addr = 0x%08X. Len = 0x%08X\n", addr, currentLen);
-            for(uint32_t i = 0; i < currentLen; i++)
-            {
-                printf("%02X ", m_bufRead[i]);
-            }
-            printf("\n");
-            len -= currentLen;
-            addr += currentLen;
-        }
-    }
-    if(passed)
-    {
-        printf("passed readAndPrint from 0x%08X to 0x%08X\n", startAddr, addr);
     }
     return passed;
 }

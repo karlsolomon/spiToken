@@ -54,7 +54,4 @@ bool Test_Verify(WriteAndVerifyHook read, uint32_t addr, uint8_t* expectedBuf, u
 // Wrapper to Read & Verify a peripheral's memory
 bool Test_VerifyErased(WriteAndVerifyHook read, uint32_t addr, uint32_t len);
 
-// Wrapper to Read and Print a peripheral's memory
-bool Test_ReadAndPrint(WriteAndVerifyHook read, uint32_t addr, uint32_t len);
-
 #endif /* _TEST_H_ */
