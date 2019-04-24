@@ -36,6 +36,7 @@
 
 #define TEST_MANUAL_TIMEOUT         Timer_10MIN
 #define TEST_BUFFER_SIZE            256
+#define TEST_RETRY_CNT              2
 
 static uint8_t m_bufWrite[TEST_BUFFER_SIZE];
 static uint8_t m_bufRead[TEST_BUFFER_SIZE];
@@ -80,7 +81,7 @@ bool Test_WriteAndVerify(WriteAndVerifyHook write, WriteAndVerifyHook read, uint
     uint8_t writeResult = 0;
     uint8_t readResult = 0;
     bool passed = true;
-
+    uint32_t startAddr = addr;
     if(!m_isInitialized)
     {
         test_inits();
@@ -129,7 +130,7 @@ bool Test_WriteAndVerify(WriteAndVerifyHook write, WriteAndVerifyHook read, uint
     }
     if(passed)
     {
-	printf("passed write & verify from 0x%08X to 0x%08X\n", addr, addr + len);
+	printf("passed write & verify from 0x%08X to 0x%08X\n", startAddr, addr);
     }
     return passed;
 }
@@ -155,7 +156,7 @@ bool Test_Verify(WriteAndVerifyHook read, uint32_t addr, uint8_t* expectedBuf, u
     uint32_t currentLen = 0;
     uint8_t readResult = 0;
     bool passed = true;
-
+    uint32_t startAddr = addr;
     while(len > 0)
     {
         currentLen = MIN(bufLen, len);
@@ -186,7 +187,7 @@ bool Test_Verify(WriteAndVerifyHook read, uint32_t addr, uint8_t* expectedBuf, u
     }
     if(passed)
     {
-        printf("passed verify from 0x%08X to 0x%08X\n", addr, addr + len);
+        printf("passed verify from 0x%08X to 0x%08X\n", startAddr, addr);
     }
     return passed;
 }
@@ -212,6 +213,7 @@ bool Test_VerifyErased(WriteAndVerifyHook read, uint32_t addr, uint32_t len)
     uint32_t currentLen = 0;
     uint8_t readResult = 0;
     bool passed = true;
+    uint32_t startAddr = addr;
 
     if(!m_isInitialized)
     {
@@ -248,7 +250,7 @@ bool Test_VerifyErased(WriteAndVerifyHook read, uint32_t addr, uint32_t len)
     }
     if(passed)
     {
-        printf("passed verifyErase from 0x%08X to 0x%08X\n", addr, addr + len);
+        printf("passed verifyErase from 0x%08X to 0x%08X\n", startAddr, addr);
     }
     return passed;
 }
@@ -273,7 +275,7 @@ bool Test_ReadAndPrint(WriteAndVerifyHook read, uint32_t addr, uint32_t len)
     bool passed = true;
     uint32_t currentLen = 0;
     uint8_t readFailed = 0;
-
+    uint32_t startAddr = addr;
     while(len > 0)
     {
         currentLen = MIN(TEST_BUFFER_SIZE, len);
@@ -301,7 +303,7 @@ bool Test_ReadAndPrint(WriteAndVerifyHook read, uint32_t addr, uint32_t len)
     }
     if(passed)
     {
-        printf("passed readAndPrint from 0x%08X to 0x%08X\n", addr, addr + len);
+        printf("passed readAndPrint from 0x%08X to 0x%08X\n", startAddr, addr);
     }
     return passed;
 }

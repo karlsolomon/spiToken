@@ -35,7 +35,7 @@
 // send this from Master whenever you are trying to read, but don't have
 // anything to write
 #define SPI_DUMMY_VALUE             0xA5
-#define SPI_CLOCK_SPEED_HZ          20000000
+#define SPI_CLOCK_SPEED_HZ          10000000
 
 #define SPI_BAD_CONNECTION_FD       ((int) -1)
 #define TMP_WRITE_BUF_SIZE          256

@@ -60,20 +60,48 @@ int main(void)
     sem_init(&g_tokenSem, 1, 1);
     pthread_create(&debounceThread, NULL, Debounce_Main, NULL);
     uint32_t startTick = Timer_GetTick();
+    uint32_t tick = Timer_GetTick();
+    printf("time = %d\n", tick);    
     while(1)
     {
-        uint32_t tick = Timer_GetTick();
-        printf("time = %d\n", tick);
         testToken_GetDeviceTypeTest();
-        Timer_Sleep(1000);
-	testToken_GetDeviceTypeTest();
+        tick = Timer_GetTick();
+        printf("elapsedTime = %d\n", tick - startTick);
+
         testToken_flash_readTest();
+        tick = Timer_GetTick();
+        printf("elapsedTime = %d\n", tick - startTick);
+        startTick = tick;
+
         testToken_flash_writeTest();
-	testToken_flash_writeAll();
-	testToken_flash_eraseTest();
-	testToken_flash_eraseAllTest();
-	testToken_flash_eraseChipTest();
-	testToken_flash_protectTest();
+        tick = Timer_GetTick();
+        printf("elapsedTime = %d\n", tick - startTick);
+        startTick = tick;
+
+        testToken_flash_writeAll();
+        tick = Timer_GetTick();
+        printf("elapsedTime = %d\n", tick - startTick);
+        startTick = tick;
+
+        testToken_flash_eraseTest();
+        tick = Timer_GetTick();
+        printf("elapsedTime = %d\n", tick - startTick);
+        startTick = tick;
+
+        testToken_flash_eraseAllTest();
+        tick = Timer_GetTick();
+        printf("elapsedTime = %d\n", tick - startTick);
+        startTick = tick;
+
+        testToken_flash_eraseChipTest();
+        tick = Timer_GetTick();
+        printf("elapsedTime = %d\n", tick - startTick);
+        startTick = tick;
+
+        testToken_flash_protectTest();
+        tick = Timer_GetTick();
+        printf("elapsedTime = %d\n", tick - startTick);
+        startTick = tick;
     }
     return 0;
 }
