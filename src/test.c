@@ -91,7 +91,6 @@ bool Test_WriteAndVerify(WriteAndVerifyHook write, WriteAndVerifyHook read, uint
     {
         currentLen = MIN(TEST_BUFFER_SIZE, len);
         writeResult = write(addr, m_bufWrite, currentLen);
-        Timer_Sleep(10);
         if(writeResult)
         {
             passed = false;
@@ -162,7 +161,6 @@ bool Test_Verify(WriteAndVerifyHook read, uint32_t addr, uint8_t* expectedBuf, u
     {
         currentLen = MIN(bufLen, len);
         readResult = read(addr, m_bufRead, currentLen);
-        Timer_Sleep(10);
         if(readResult)
         {
             passed = false;
@@ -226,7 +224,7 @@ bool Test_VerifyErased(WriteAndVerifyHook read, uint32_t addr, uint32_t len)
     {
         currentLen = MIN(TEST_BUFFER_SIZE, len);
         readResult = read(addr, m_bufRead, currentLen);
-        Timer_Sleep(10);
+        Timer_Sleep(30);
         if(readResult)
         {
             passed = false;
@@ -283,7 +281,7 @@ bool Test_ReadAndPrint(WriteAndVerifyHook read, uint32_t addr, uint32_t len)
     {
         currentLen = MIN(TEST_BUFFER_SIZE, len);
         readFailed = read(addr, m_bufRead, currentLen);
-        Timer_Sleep(10);
+        Timer_Sleep(30);
         if(readFailed)
         {
             passed = false;

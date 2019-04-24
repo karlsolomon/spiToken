@@ -9,18 +9,13 @@
 #include "test.h"
 #include "TokenFlash.h"
 
-#define TEST_TOKEN_RW_SIZE    256
-
+#define TEST_TOKEN_RW_SIZE      256
 #define TOK_F_WRITE             ((WriteAndVerifyHook) TokenFlash_Write)
 #define TOK_F_ERASE             ((EraseHook) TokenFlash_Erase)
 #define TOK_F_READ              ((WriteAndVerifyHook) TokenFlash_Read)
-
 #define TEST_TOKEN_START_ADDR   0
 
-
-
 static TOKEN_t m_tokenType = TOKEN_NONE;
-
 
 sem_t g_tokenSem;
 bool m_isInserted = false;
@@ -289,7 +284,8 @@ static void testToken_flash_protectTest(void)
     for(uint8_t i = 0; i < (uint8_t) TOKEN_FLASH_PROTECT_COUNT; i++)
     {
         err = TokenFlash_ProtectRegion((TOKEN_FlashProtect_t) i);
-        protectedRegion = (uint8_t) TokenFlash_GetProtectedRegion();
+	Timer_Sleep(10);
+	protectedRegion = (uint8_t) TokenFlash_GetProtectedRegion();
         if(i != protectedRegion)
         {
             printf("err = %d. Protection failed. Expected = %d, actual = %d\n", err, i, protectedRegion);
