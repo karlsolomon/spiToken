@@ -495,7 +495,7 @@ static int testToken_flash_eraseChipTest(void)
 {
     int errCount = 0;
     TOKEN_ErrCode_t err = TokenFlash_EraseAll();
-    Timer0_Sleep(TOKEN_FLASH_ERASE_ALL_TIME);
+    Timer_Sleep(TOKEN_FLASH_ERASE_ALL_TIME);
     if(err != TOKEN_ERR_OK)
     {
         errCount++;

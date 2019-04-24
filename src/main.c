@@ -33,14 +33,14 @@ static void testToken_GetDeviceTypeTest(void);
 static void testToken_flash_readTest(void);
 
 // Verify token can write
-static int testToken_flash_writeTest(void);
+static void testToken_flash_writeTest(void);
 
 
 // Verify token can enable writing
-static int testToken_flash_writeAll(void);
+static void testToken_flash_writeAll(void);
 
 // Verify token can erase
-static int testToken_flash_eraseTest(void);
+static void testToken_flash_eraseTest(void);
 
 // Verify token can erase all memory through erase cmd
 static void testToken_flash_eraseAllTest(void);
@@ -123,7 +123,7 @@ static void testToken_flash_readTest(void)
  * @return int
  *
  ******************************************************************************/
-static int testToken_flash_writeTest(void)
+static void testToken_flash_writeTest(void)
 {
     TOKEN_ErrCode_t err = TokenFlash_Erase(TEST_TOKEN_START_ADDR, TOKEN_FLASH_SECTOR_LEN);
     if(!Test_WriteAndVerify(TOK_F_WRITE, TOK_F_READ, TEST_TOKEN_START_ADDR, TOKEN_FLASH_SECTOR_LEN))
@@ -131,7 +131,6 @@ static int testToken_flash_writeTest(void)
         printf("err = %d. Verify failed\n", err);
     }
     TOK_F_ERASE(TEST_TOKEN_START_ADDR, TOKEN_FLASH_SECTOR_LEN);
-    return errCount;
 }
 
 /*******************************************************************************
@@ -144,7 +143,7 @@ static int testToken_flash_writeTest(void)
  * @return int
  *
  ******************************************************************************/
-static int testToken_flash_writeAll(void)
+static void testToken_flash_writeAll(void)
 {
     TOKEN_ErrCode_t err = TokenFlash_Erase(0, TOKEN_FLASH_MEM_SIZE);
     if(!Test_WriteAndVerify(TOK_F_WRITE, TOK_F_READ, 0, TOKEN_FLASH_MEM_SIZE))
@@ -152,7 +151,6 @@ static int testToken_flash_writeAll(void)
         printf("err = %d. Verify failed\n", err);
     }
     TOK_F_ERASE(0, TOKEN_FLASH_MEM_SIZE);
-    return errCount;
 }
 
 /*******************************************************************************
@@ -165,9 +163,8 @@ static int testToken_flash_writeAll(void)
  * @return int
  *
  ******************************************************************************/
-static int testToken_flash_eraseTest(void)
+static void testToken_flash_eraseTest(void)
 {
-    int errCount = 0;
     TOKEN_ErrCode_t err = TokenFlash_Erase(TEST_TOKEN_START_ADDR, TOKEN_FLASH_SECTOR_LEN);
     if(err != TOKEN_ERR_OK)
     {
@@ -179,7 +176,6 @@ static int testToken_flash_eraseTest(void)
         errCount++;
         printf("err = %d. Verify failed\n", err);
     }
-    return errCount;
 }
 
 /*******************************************************************************
@@ -203,7 +199,6 @@ static void testToken_flash_eraseAllTest(void)
     {
         printf("err = %d. Verify failed\n", err);
     }
-    return errCount;
 }
 
 /*******************************************************************************
@@ -220,7 +215,7 @@ static void testToken_flash_eraseChipTest(void)
 {
     int errCount = 0;
     TOKEN_ErrCode_t err = TokenFlash_EraseAll();
-    Timer0_Sleep(TOKEN_FLASH_ERASE_ALL_TIME);
+    Timer_Sleep(TOKEN_FLASH_ERASE_ALL_TIME);
     if(err != TOKEN_ERR_OK)
     {
         errCount++;
@@ -231,7 +226,6 @@ static void testToken_flash_eraseChipTest(void)
         errCount++;
         printf("err = %d. Verify failed\n", err);
     }
-    return errCount;
 }
 
 /*******************************************************************************
@@ -259,6 +253,5 @@ static void testToken_flash_protectTest(void)
         }
     }
     TokenFlash_ProtectRegion(TOKEN_FLASH_PROTECT_NONE);
-    return errCount;
 }
 

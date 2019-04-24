@@ -84,8 +84,8 @@
 /* Private function prototypes -----------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
 
-#define ERROR_BLINK_SPEED TIMER0_250MS
-#define ERROR_RESET_SPEED TIMER0_1SEC
+#define ERROR_BLINK_SPEED Timer_250MS
+#define ERROR_RESET_SPEED Timer_1SEC
 
 #define ERROR_BLINK_NUM_HARDFAULT 1
 #define ERROR_BLINK_NUM_USAGEFAULT 2
@@ -277,7 +277,7 @@ void TIM2_IRQHandler(void)
     if(LL_TIM_IsActiveFlag_UPDATE(TIM2) == 1)
     {
     	/* Clear the update interrupt flag*/
-        Timer0_UpdateCallback();
+        Timer_UpdateCallback();
         LL_TIM_ClearFlag_UPDATE(TIM2);
     }
 }
@@ -489,11 +489,11 @@ static void blinkNTimes(uint8_t numTimesToBlink)
     for(uint8_t i = 0; i < numTimesToBlink; i++)
     {
         LED2_ON();
-        Timer0_Sleep(ERROR_BLINK_SPEED);
+        Timer_Sleep(ERROR_BLINK_SPEED);
         LED2_OFF();
-        Timer0_Sleep(ERROR_BLINK_SPEED);
+        Timer_Sleep(ERROR_BLINK_SPEED);
     }
-    Timer0_Sleep(ERROR_RESET_SPEED);
+    Timer_Sleep(ERROR_RESET_SPEED);
 }
 
 /**

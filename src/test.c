@@ -34,7 +34,7 @@
  * Constants Declarations
  ******************************************************************************/
 
-#define TEST_MANUAL_TIMEOUT         TIMER0_10MIN
+#define TEST_MANUAL_TIMEOUT         Timer_10MIN
 #define TEST_BUFFER_SIZE            256
 
 static uint8_t m_bufWrite[TEST_BUFFER_SIZE];
