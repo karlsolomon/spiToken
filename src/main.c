@@ -52,14 +52,9 @@ int main(void)
         printf("time = %d\n", tick);
         testToken_GetDeviceTypeTest();
         Timer_Sleep(1000);
-        if(Timer_TimeoutExpired(startTick, 5000))
-        {
-            printf("timeout expired! start = %d, current = %d", startTick, Timer_GetTick());
-            startTick = Timer_GetTick();
-        }
 	testToken_GetDeviceTypeTest();
-    testToken_flash_readTest();
-    testToken_flash_writeTest();
+        testToken_flash_readTest();
+        testToken_flash_writeTest();
     }
     return 0;
 }

@@ -17,6 +17,7 @@
 // System Includes
 #include <wiringPi.h>
 #include "TypeDefs.h"
+#include <string.h>
 
 // Module Includes
 #include <wiringPiSPI.h>
@@ -34,10 +35,11 @@
 // send this from Master whenever you are trying to read, but don't have
 // anything to write
 #define SPI_DUMMY_VALUE             0xA5
-#define SPI_CLOCK_SPEED_HZ          500000
+#define SPI_CLOCK_SPEED_HZ          2000000
 
 #define SPI_BAD_CONNECTION_FD       ((int) -1)
-
+#define TMP_WRITE_BUF_SIZE          256
+static uint8_t tmpWriteBuf[TMP_WRITE_BUF_SIZE]; 
 
 /*******************************************************************************
  * Data Types Declarations
@@ -351,10 +353,20 @@ static void spi_deselect(void)
 static SPI_ErrCode_t spi_writeBuf(uint8_t* buf, uint32_t len)
 {
     SPI_ErrCode_t err = SPI_ERR_OK;
-    int fd = wiringPiSPIDataRW(SPI_CHANNEL, buf, (int) len);
-    if(fd == SPI_BAD_CONNECTION_FD)
+    uint32_t i = 0;
+    int fd = 0;
+    uint32_t currentLen = 0;
+    while(len > 0)
     {
-        err = SPI_ERR_GENERAL;
+	currentLen = MIN(TMP_WRITE_BUF_SIZE, len);
+	memcpy(tmpWriteBuf, buf + i, currentLen);
+	len -= currentLen;
+	i += currentLen;
+	fd = wiringPiSPIDataRW(SPI_CHANNEL, tmpWriteBuf, (int) currentLen);
+        if(fd == SPI_BAD_CONNECTION_FD)
+        {
+            err = SPI_ERR_GENERAL;
+        }
     }
     return err;
 }

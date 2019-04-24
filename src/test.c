@@ -17,9 +17,10 @@
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdarg.h>
+#include <string.h>
 
 // Module Includes
-#include "Test.h"
+#include "test.h"
 #include "TestToken.h"
 
 // Utility Includes
@@ -94,7 +95,7 @@ bool Test_WriteAndVerify(WriteAndVerifyHook write, WriteAndVerifyHook read, uint
             passed = false;
             if(TEST_DEBUG_FULL)
             {
-                printf("Failed Write at addr 0x%08X. Err code = %d", addr, writeResult);
+                printf("Failed Write at addr 0x%08X. Err code = %d\n", addr, writeResult);
             }
             break;
         }
@@ -106,7 +107,7 @@ bool Test_WriteAndVerify(WriteAndVerifyHook write, WriteAndVerifyHook read, uint
                 passed = false;
                 if(TEST_DEBUG_FULL)
                 {
-                    printf("Failed Read at addr 0x%08X. Err code = %d", addr, readResult);
+                    printf("Failed Read at addr 0x%08X. Err code = %d\n", addr, readResult);
                 }
                 break;
             }
@@ -115,7 +116,7 @@ bool Test_WriteAndVerify(WriteAndVerifyHook write, WriteAndVerifyHook read, uint
                 passed = false;
                 if(TEST_DEBUG_FULL)
                 {
-                    printf("Failed Verify at addr 0x%08X", addr);
+                    printf("Failed Verify at addr 0x%08X\n", addr);
                 }
                 break;
             }
@@ -125,6 +126,10 @@ bool Test_WriteAndVerify(WriteAndVerifyHook write, WriteAndVerifyHook read, uint
                 addr += currentLen;
             }
         }
+    }
+    if(passed)
+    {
+	printf("passed write & verify\n");
     }
     return passed;
 }
@@ -160,7 +165,7 @@ bool Test_Verify(WriteAndVerifyHook read, uint32_t addr, uint8_t* expectedBuf, u
             passed = false;
             if(TEST_DEBUG_FULL)
             {
-                printf("\tFailed Read at addr 0x%08X. Err code = %d", addr, readResult);
+                printf("\tFailed Read at addr 0x%08X. Err code = %d\n", addr, readResult);
             }
             break;
         }
@@ -169,7 +174,7 @@ bool Test_Verify(WriteAndVerifyHook read, uint32_t addr, uint8_t* expectedBuf, u
             passed = false;
             if(TEST_DEBUG_FULL)
             {
-                printf("\tFailed Verify at addr 0x%08X", addr);
+                printf("\tFailed Verify at addr 0x%08X\n", addr);
             }
             break;
         }
@@ -178,6 +183,10 @@ bool Test_Verify(WriteAndVerifyHook read, uint32_t addr, uint8_t* expectedBuf, u
             len -= currentLen;
             addr += currentLen;
         }
+    }
+    if(passed)
+    {
+        printf("passed verify\n");
     }
     return passed;
 }
@@ -218,7 +227,7 @@ bool Test_VerifyErased(WriteAndVerifyHook read, uint32_t addr, uint32_t len)
             passed = false;
             if(TEST_DEBUG_FULL)
             {
-                printf("Failed Read at addr 0x%08X. Err code = %d", addr, readResult);
+                printf("Failed Read at addr 0x%08X. Err code = %d\n", addr, readResult);
             }
             break;
         }
@@ -227,7 +236,7 @@ bool Test_VerifyErased(WriteAndVerifyHook read, uint32_t addr, uint32_t len)
             passed = false;
             if(TEST_DEBUG_FULL)
             {
-                printf("Failed Verify at addr 0x%08X", addr);
+                printf("Failed Verify at addr 0x%08X\n", addr);
             }
             break;
         }
@@ -270,13 +279,13 @@ bool Test_ReadAndPrint(WriteAndVerifyHook read, uint32_t addr, uint32_t len)
             passed = false;
             if(TEST_DEBUG_FULL)
             {
-                printf("Failed Read at addr 0x%08X. Err code = %d", addr, readFailed);
+                printf("Failed Read at addr 0x%08X. Err code = %d\n", addr, readFailed);
             }
             break;
         }
         else
         {
-            printf("Addr = 0x%08X. Len = 0x%08X", addr, currentLen);
+            printf("Addr = 0x%08X. Len = 0x%08X\n", addr, currentLen);
             for(uint32_t i = 0; i < currentLen; i++)
             {
                 printf("%02X ", m_bufRead[i]);
