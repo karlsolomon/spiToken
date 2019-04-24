@@ -59,6 +59,7 @@ int main(void)
     pinMode(INPUT, LOFO);
     sem_init(&g_tokenSem, 1, 1);
     pthread_create(&debounceThread, NULL, Debounce_Main, NULL);
+    Timer_Sleep(2000);
     uint32_t startTick = Timer_GetTick();
     uint32_t tick = Timer_GetTick();
     printf("time = %d\n", tick);    
