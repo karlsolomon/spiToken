@@ -6,6 +6,7 @@
 #include <semaphore.h>
 #include <wiringPi.h>
 #include "TypeDefs.h"
+#include "test.h"
 
 sem_t g_tokenSem;
 bool m_isInserted = false;
@@ -36,6 +37,8 @@ int main(void)
             startTick = Timer_GetTick();
         }
 	testToken_GetDeviceTypeTest();
+    testToken_flash_readTest();
+    testToken_flash_writeTest();
     }
     return 0;
 }
@@ -58,3 +61,47 @@ static void testToken_GetDeviceTypeTest(void)
         printf("No Token Connected\n");
     }
 }
+
+/*******************************************************************************
+ * @brief testToken_flash_writeEnable
+ *
+ * Verify token can read
+ *
+ * @param  None
+ *
+ * @return int
+ *
+ ******************************************************************************/
+static void testToken_flash_readTest(void)
+{
+    uint8_t tmpReadBuffer[TOKEN_FLASH_PAGE_LEN] = {0};
+    TOKEN_ErrCode_t err = (TOKEN_ErrCode_t) TokenFlash_Read(TEST_TOKEN_START_ADDR, tmpReadBuffer, TOKEN_FLASH_PAGE_LEN);
+    if(err != TOKEN_ERR_OK)
+    {
+        printf("err = %d. Read failed\n", err);
+    }
+}
+
+/*******************************************************************************
+ * @brief testToken_flash_writeEnable
+ *
+ * Verify token can write
+ *
+ * @param  None
+ *
+ * @return int
+ *
+ ******************************************************************************/
+static int testToken_flash_writeTest(void)
+{
+    int errCount = 0;
+    TOKEN_ErrCode_t err = TokenFlash_Erase(TEST_TOKEN_START_ADDR, TOKEN_FLASH_SECTOR_LEN);
+    if(!Test_WriteAndVerify(TOK_F_WRITE, TOK_F_READ, TEST_TOKEN_START_ADDR, TOKEN_FLASH_SECTOR_LEN))
+    {
+        errCount++;
+        printf("err = %d. Verify failed\n", err);
+    }
+    TOK_F_ERASE(TEST_TOKEN_START_ADDR, TOKEN_FLASH_SECTOR_LEN);
+    return errCount;
+}
+
