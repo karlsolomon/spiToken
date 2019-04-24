@@ -22,7 +22,6 @@
 
 // Module Includes
 #include "Token.h"
-#include "TokenEeprom.h"
 #include "TokenFlash.h"
 
 // Utility Includes
@@ -232,7 +231,7 @@ TOKEN_t Token_GetDeviceType(void)
         }
         else
         {
-            printf("eeprom token\n");
+            printf("eeprom token. Invalid for programmer application!!\n");
             tokenType = TOKEN_EEPROM;
         }
     }
