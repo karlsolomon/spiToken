@@ -33,7 +33,7 @@ class FileWatcher(object):
             if self.call_func_on_change is not None:
                 self.call_func_on_change(*self.args, **self.kwargs)
 
-    # Keep watching in a loop        
+    # Keep watching in a loop
     def watch(self):
         while self.running: 
             try: 
