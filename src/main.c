@@ -8,6 +8,10 @@
 #include "test.h"
 #include "TokenFlash.h"
 
+#define INPROGRESS()    digitalWrite(LED_INPROGRESS, 1); digitalWrite(LED_SUCCESS, 0); digitalWrite(LED_FAIL, 0)
+#define PASSED()        digitalWrite(LED_INPROGRESS, 0); digitalWrite(LED_SUCCESS, 1); digitalWrite(LED_FAIL, 0)
+#define FAILED()        digitalWrite(LED_INPROGRESS, 0); digitalWrite(LED_SUCCESS, 0); digitalWrite(LED_FAIL, 1)
+
 extern sem_t g_tokenSem;
 extern bool m_isInserted;
 extern bool m_isStatusChanged;
@@ -42,6 +46,7 @@ int main(void)
     {
         if(m_isInserted && m_isStatusChanged)
         {
+            INPROGRESS();
             sem_wait(&g_tokenSem);
             m_isStatusChanged = false;
             sem_post(&g_tokenSem);
@@ -64,34 +69,41 @@ int main(void)
  ******************************************************************************/
 static void programToken(void)
 {
-    digitalWrite(LED_INPROGRESS, 1);
-    digitalWrite(LED_SUCCESS, 0);
-    digitalWrite(LED_FAIL, 0);
     fp = fopen(FILE_PATH, "r+");
     uint16_t size = 0;
     uint32_t addr = 0;
     TokenFlash_Erase(0, TOKEN_FLASH_SECTOR_LEN);
-    Timer_Sleep(TIMER_5SEC);
+    Timer_Sleep(TOKEN_FLASH_ERASE_SECTOR_TIME);
     bool passed = false;
+    bool eraseSector = false;
+    uint32_t lastSector = 0;
+    uint32_t currentSector = 0;
     do
     {
         size = (uint16_t) fread(tmpBuf, 1, sizeof(tmpBuf), fp);
-        passed = Test_WriteAndVerify(TOK_F_WRITE, TOK_F_READ, addr, size);
-        if(!passed)
+        if(size != 0)
         {
-            digitalWrite(LED_FAIL, 1);
-            digitalWrite(LED_INPROGRESS, 0);
-            digitalWrite(LED_SUCCESS, 0);
-            printf("failed token write and verify");
-            break;
+            lastSector = (addr - 1) / TOKEN_FLASH_SECTOR_LEN;
+            currentSector = (addr + size) / TOKEN_FLASH_SECTOR_LEN;
+            if(currentSector > lastSector)
+            {
+                TokenFlash_Erase(currentSector*TOKEN_FLASH_SECTOR_LEN, TOKEN_FLASH_SECTOR_LEN);
+                Timer_Sleep(TOKEN_FLASH_ERASE_SECTOR_TIME);
+            }
+            passed = Test_WriteAndVerify(TOK_F_WRITE, TOK_F_READ, addr, size);
+            if(!passed)
+            {
+                printf("failed token write and verify");
+                FAILED();
+                break;
+            }
+            addr += size;            
         }
-        addr += size;
     } while(size != 0);
     if(passed)
-    {        
-        digitalWrite(LED_FAIL, 0);
-        digitalWrite(LED_INPROGRESS, 1);
-        digitalWrite(LED_SUCCESS, 1);
+    {
+        PASSED();
         printf("passed token write and verify");
     }
+    fclose(fp);
 }
