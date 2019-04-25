@@ -79,13 +79,9 @@ static bool token_isWriteEnabled(void);
  ******************************************************************************/
 void Token_Init(void)
 {    
-    wiringPiSetup();
-    Timer_Init();
     SPI_Init();    
     pthread_create(&debounceThread, NULL, Debounce_Main, NULL);
     Timer_Sleep(TIMER_1SEC); // recognize if token is inserted @ startup
-    pinMode(OUTPUT, SPI_CS_PIN);
-    pinMode(INPUT, LOFO);
     sem_init(&g_tokenSem, 1, 1);
 }
 
