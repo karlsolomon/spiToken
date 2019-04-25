@@ -82,8 +82,8 @@ void Token_Init(void)
 {    
     SPI_Init();    
     pthread_create(&debounceThread, NULL, Debounce_Main, NULL);
-    Timer_Sleep(TIMER_1SEC); // recognize if token is inserted @ startup
     sem_init(&g_tokenSem, 1, 1);
+    Timer_Sleep(TIMER_1SEC); // recognize if token is inserted @ startup
 }
 
 

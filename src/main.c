@@ -43,7 +43,7 @@ int main(void)
     pinMode(LED_SUCCESS, OUTPUT);
     pinMode(LOFO, INPUT);
     STARTUP();
-    Token_Init();   
+    Token_Init();
     while(1)
     {
         if(m_isInserted && m_isStatusChanged)
