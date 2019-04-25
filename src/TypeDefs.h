@@ -2,6 +2,7 @@
 #include <stdbool.h>
 #include <stddef.h>
 
+#define TEST_DEBUG_FULL  0
 #define SPI_CS_PIN 	     17
 #define LOFO 		     18
 #define LED_TOKEN 	     19

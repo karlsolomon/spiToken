@@ -8,6 +8,7 @@
 #include "test.h"
 #include "TokenFlash.h"
 
+#define STARTUP()       digitalWrite(LED_INPROGRESS, 0); digitalWrite(LED_SUCCESS, 0); digitalWrite(LED_FAIL, 0)
 #define INPROGRESS()    digitalWrite(LED_INPROGRESS, 1); digitalWrite(LED_SUCCESS, 0); digitalWrite(LED_FAIL, 0)
 #define PASSED()        digitalWrite(LED_INPROGRESS, 0); digitalWrite(LED_SUCCESS, 1); digitalWrite(LED_FAIL, 0)
 #define FAILED()        digitalWrite(LED_INPROGRESS, 0); digitalWrite(LED_SUCCESS, 0); digitalWrite(LED_FAIL, 1)
@@ -41,6 +42,7 @@ int main(void)
     pinMode(LED_FAIL, OUTPUT);
     pinMode(LED_SUCCESS, OUTPUT);
     pinMode(LOFO, INPUT);
+    STARTUP();
     Token_Init();   
     while(1)
     {

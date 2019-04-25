@@ -132,9 +132,9 @@ bool Test_WriteAndVerify(WriteAndVerifyHook write, WriteAndVerifyHook read, uint
             }
         }
     }
-    if(passed)
+    if(passed && TEST_DEBUG_FULL)
     {
-	printf("passed write & verify from 0x%08X to 0x%08X\n", startAddr, addr);
+        printf("passed write & verify from 0x%08X to 0x%08X\n", startAddr, addr);
     }
     return passed;
 }
@@ -194,7 +194,7 @@ bool Test_Verify(WriteAndVerifyHook read, uint32_t addr, uint8_t* expectedBuf, u
             }
         }
     }
-    if(passed)
+    if(passed && TEST_DEBUG_FULL)
     {
         printf("passed verify from 0x%08X to 0x%08X\n", startAddr, addr);
     }
@@ -262,7 +262,7 @@ bool Test_VerifyErased(WriteAndVerifyHook read, uint32_t addr, uint32_t len)
             }
         }
     }
-    if(passed)
+    if(passed && TEST_DEBUG_FULL)
     {
         printf("passed verifyErase from 0x%08X to 0x%08X\n", startAddr, addr);
     }
