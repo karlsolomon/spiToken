@@ -41,6 +41,7 @@
 
 sem_t g_tokenSem;
 bool m_isInserted = false;
+bool m_isStatusChanged = false;
 pthread_t debounceThread;
 
 

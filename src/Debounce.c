@@ -75,8 +75,9 @@ static void debounce_inserting(void)
     {
         sem_wait(&g_tokenSem);
         m_isInserted = true;
+        m_isStatusChanged = true;
         sem_post(&g_tokenSem);
-	printf("inserted\n");
+	    printf("inserted\n");
     }
     else
     {
@@ -114,6 +115,7 @@ static void debounce_removing(void)
     {
         sem_wait(&g_tokenSem);
         m_isInserted = false;
+        m_isStatusChanged = true;
         sem_post(&g_tokenSem);
     	printf("removed\n");
     }
