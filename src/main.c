@@ -72,10 +72,10 @@ static void programToken(void)
     uint32_t addr = 0;
     TokenFlash_Erase(0, TOKEN_FLASH_SECTOR_LEN);
     Timer_Sleep(TIMER_5SEC);
-    bool pass = false;
+    bool passed = false;
     do
     {
-        size = (uint16_t) fread(tmpBuf, 1, sizeof(tmpBuf));
+        size = (uint16_t) fread(tmpBuf, 1, sizeof(tmpBuf), fp);
         passed = Test_WriteAndVerify(TOK_F_WRITE, TOK_F_READ, addr, size);
         if(!passed)
         {

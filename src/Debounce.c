@@ -8,6 +8,7 @@
 
 extern sem_t g_tokenSem;
 extern bool m_isInserted;
+extern bool m_isStatusChanged;
 
 #define DEBOUNCE_TIME_MS TIMER_50MS
 #define DEBOUNCE_TIMEOUT TIMER_200MS
