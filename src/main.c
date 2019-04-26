@@ -8,14 +8,14 @@
 #include "test.h"
 #include "TokenFlash.h"
 
-#define STARTUP()       digitalWrite(LED_INPROGRESS, 0); digitalWrite(LED_SUCCESS, 0); digitalWrite(LED_FAIL, 0)
+#define STARTUP()       digitalWrite(LED_INPROGRESS, 0); digitalWrite(LED_SUCCESS, 0); digitalWrite(LED_FAIL, 0); digitalWrite(LED_TOKEN, 0)
 #define INPROGRESS()    digitalWrite(LED_INPROGRESS, 1); digitalWrite(LED_SUCCESS, 0); digitalWrite(LED_FAIL, 0)
 #define PASSED()        digitalWrite(LED_INPROGRESS, 0); digitalWrite(LED_SUCCESS, 1); digitalWrite(LED_FAIL, 0)
 #define FAILED()        digitalWrite(LED_INPROGRESS, 0); digitalWrite(LED_SUCCESS, 0); digitalWrite(LED_FAIL, 1)
 
 extern sem_t g_tokenSem;
-extern bool m_isInserted;
 extern bool m_isStatusChanged;
+extern bool m_isInserted;
 static FILE* fp;
 static uint8_t tmpBuf[256] = {0};
 
@@ -46,15 +46,16 @@ int main(void)
     Token_Init();
     while(1)
     {
-        if(m_isInserted && m_isStatusChanged)
+        if(m_isStatusChanged)
         {
-            INPROGRESS();
-            sem_wait(&g_tokenSem);
-            m_isStatusChanged = false;
-            sem_post(&g_tokenSem);
-            programToken();
+            if(m_isInserted)
+            {
+                sem_wait(&g_tokenSem);
+                m_isStatusChanged = false;
+                sem_post(&g_tokenSem);
+                programToken();
+            }
         }
-        Timer_Sleep(TIMER_1SEC);
     }
     return 0;
 }
@@ -71,9 +72,11 @@ int main(void)
  ******************************************************************************/
 static void programToken(void)
 {
+    printf("Entering program token\n");
     fp = fopen(FILE_PATH, "r+");
     uint16_t size = 0;
     uint32_t addr = 0;
+    INPROGRESS();
     TokenFlash_Erase(0, TOKEN_FLASH_SECTOR_LEN);
     Timer_Sleep(TOKEN_FLASH_ERASE_SECTOR_TIME);
     bool passed = false;
@@ -95,7 +98,7 @@ static void programToken(void)
             passed = Test_WriteAndVerify(TOK_F_WRITE, TOK_F_READ, addr, size);
             if(!passed)
             {
-                printf("failed token write and verify");
+                printf("failed token write and verify\n");
                 FAILED();
                 break;
             }
@@ -105,7 +108,7 @@ static void programToken(void)
     if(passed)
     {
         PASSED();
-        printf("passed token write and verify");
+        printf("passed token write and verify\n");
     }
     fclose(fp);
 }

@@ -2,13 +2,13 @@
 #include <stdbool.h>
 #include <stddef.h>
 
-#define TEST_DEBUG_FULL  0
-#define SPI_CS_PIN 	     17
-#define LOFO 		     18
-#define LED_TOKEN 	     19
-#define LED_INPROGRESS   26
-#define LED_FAIL 	     6
-#define LED_SUCCESS 	 13
+#define TEST_DEBUG_FULL  1
+#define SPI_CS_PIN 	     17 // done
+#define LOFO 		     18 // done
+#define LED_TOKEN 	     24 // done
+#define LED_INPROGRESS   25
+#define LED_FAIL 	     20
+#define LED_SUCCESS 	 21
 
 #define MIN(a,b)    ((a < b) ? a : b)
 

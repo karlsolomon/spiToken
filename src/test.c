@@ -35,7 +35,7 @@
 
 #define TEST_MANUAL_TIMEOUT         Timer_10MIN
 #define TEST_BUFFER_SIZE            256
-#define TEST_RETRY_CNT              3
+#define TEST_RETRY_CNT              10
 
 static uint8_t m_bufWrite[TEST_BUFFER_SIZE];
 static uint8_t m_bufRead[TEST_BUFFER_SIZE];
@@ -88,9 +88,9 @@ bool Test_WriteAndVerify(WriteAndVerifyHook write, WriteAndVerifyHook read, uint
 
     while(len > 0)
     {
-        currentLen = MIN(TEST_BUFFER_SIZE, len);
         for(uint8_t i = 0; i < TEST_RETRY_CNT; i++)
         {
+            currentLen = MIN(TEST_BUFFER_SIZE, len);
             writeResult = write(addr, m_bufWrite, currentLen);
             if(writeResult)
             {
@@ -99,7 +99,11 @@ bool Test_WriteAndVerify(WriteAndVerifyHook write, WriteAndVerifyHook read, uint
                 {
                     printf("Failed Write at addr 0x%08X. Err code = %d\n", addr, writeResult);
                 }
-                break;
+                if(i == (TEST_RETRY_CNT-1))
+                {
+                    len = 0;
+                }
+                continue;
             }
             else
             {
@@ -107,11 +111,15 @@ bool Test_WriteAndVerify(WriteAndVerifyHook write, WriteAndVerifyHook read, uint
                 if(readResult)
                 {
                     passed = false;
+                    if(i == (TEST_RETRY_CNT-1))
+                    {
+                        len = 0;
+                    }
                     if(TEST_DEBUG_FULL)
                     {
                         printf("Failed Read at addr 0x%08X. Err code = %d\n", addr, readResult);
                     }
-                    break;
+                    continue;
                 }
                 else if(memcmp(m_bufWrite, m_bufRead, currentLen))
                 {
@@ -120,7 +128,11 @@ bool Test_WriteAndVerify(WriteAndVerifyHook write, WriteAndVerifyHook read, uint
                     {
                         printf("Failed Verify Write at addr 0x%08X\n", addr);
                     }
-                    break;
+                    if(i == (TEST_RETRY_CNT-1))
+                    {
+                        len = 0;
+                    }
+                    continue;
                 }
                 else
                 {
@@ -163,9 +175,9 @@ bool Test_Verify(WriteAndVerifyHook read, uint32_t addr, uint8_t* expectedBuf, u
     uint32_t startAddr = addr;
     while(len > 0)
     {
-        currentLen = MIN(bufLen, len);
         for(uint8_t i = 0; i < TEST_RETRY_CNT; i++)
         {
+            currentLen = MIN(bufLen, len);
             readResult = read(addr, m_bufRead, currentLen);
             if(readResult)
             {
@@ -174,7 +186,11 @@ bool Test_Verify(WriteAndVerifyHook read, uint32_t addr, uint8_t* expectedBuf, u
                 {
                     printf("\tFailed Read at addr 0x%08X. Err code = %d\n", addr, readResult);
                 }
-                break;
+                if(i == (TEST_RETRY_CNT-1))
+                {
+                    len = 0;
+                }
+                continue;
             }
             else if(memcmp(expectedBuf, m_bufRead, currentLen))
             {
@@ -183,7 +199,11 @@ bool Test_Verify(WriteAndVerifyHook read, uint32_t addr, uint8_t* expectedBuf, u
                 {
                     printf("Failed Verify at addr 0x%08X\n", addr);
                 }
-                break;
+                if(i == (TEST_RETRY_CNT-1))
+                {
+                    len = 0;
+                }
+                continue;
             }
             else
             {
@@ -242,7 +262,11 @@ bool Test_VerifyErased(WriteAndVerifyHook read, uint32_t addr, uint32_t len)
                 {
                     printf("Failed Read at addr 0x%08X. Err code = %d\n", addr, readResult);
                 }
-                break;
+                if(i == (TEST_RETRY_CNT-1))
+                {
+                    len = 0;
+                }
+                continue;
             }
             else if(memcmp(m_bufErase, m_bufRead, currentLen))
             {
@@ -251,7 +275,11 @@ bool Test_VerifyErased(WriteAndVerifyHook read, uint32_t addr, uint32_t len)
                 {
                     printf("Failed Verify Erase at addr 0x%08X\n", addr);
                 }
-                break;
+                if(i == (TEST_RETRY_CNT-1))
+                {
+                    len = 0;
+                }
+                continue;
             }
             else
             {

@@ -1,7 +1,6 @@
 #include <semaphore.h>
 #include "TypeDefs.h"
 #include <wiringPi.h>
-#include "Token.h"
 #include "Timer.h"
 #include <stdio.h>
 #include <sched.h>
@@ -42,6 +41,7 @@ void* Debounce_Main(void* a)
         {
             debounce_removing();
         }
+        Timer_Sleep(50);
     }
     return 0;
 }
@@ -74,12 +74,12 @@ static void debounce_inserting(void)
     }
     if(!Timer_TimeoutExpired(startTime, DEBOUNCE_TIMEOUT) && !digitalRead(LOFO))
     {
+	    printf("inserted\n");
         sem_wait(&g_tokenSem);
         m_isInserted = true;
         m_isStatusChanged = true;
-        digitalWrite(LED_TOKEN, 1);
         sem_post(&g_tokenSem);
-	    printf("inserted\n");
+        digitalWrite(LED_TOKEN, 1);
     }
     else
     {
@@ -111,19 +111,18 @@ static void debounce_removing(void)
         {
             break;
         }
-        Timer_Sleep(TIMER_1MS);
+        Timer_Sleep(1);
     }
     if(!Timer_TimeoutExpired(startTime, DEBOUNCE_TIMEOUT) && digitalRead(LOFO))
     {
         sem_wait(&g_tokenSem);
         m_isInserted = false;
-        m_isStatusChanged = true;
-        digitalWrite(LED_TOKEN, 0);
         sem_post(&g_tokenSem);
-    	printf("removed\n");
+    	digitalWrite(LED_TOKEN, 0);
+        printf("removed\n");
     }
     else
     {
-        printf("remove failed");
+        printf("remove failed\n");
     }
 }

@@ -124,11 +124,7 @@ TOKEN_ErrCode_t Token_WriteEnable(void)
  ******************************************************************************/
 bool Token_IsInserted(void)
 {
-    bool isInserted = false;
-    sem_wait(&g_tokenSem);
-    isInserted = m_isInserted;
-    sem_post(&g_tokenSem);
-    return isInserted;
+    return m_isInserted;
 }
 
 /*******************************************************************************
