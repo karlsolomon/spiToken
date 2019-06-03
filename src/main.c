@@ -77,12 +77,15 @@ static void programToken(void)
     uint16_t size = 0;
     uint32_t addr = 0;
     INPROGRESS();
-    TokenFlash_Erase(0, TOKEN_FLASH_SECTOR_LEN);
-    Timer_Sleep(TOKEN_FLASH_ERASE_SECTOR_TIME);
+    TokenFlash_EraseAllBlocking();
+
+//    TokenFlash_Erase(0, TOKEN_FLASH_SECTOR_LEN);
+ //   Timer_Sleep(TOKEN_FLASH_ERASE_SECTOR_TIME);
     bool passed = false;
     bool eraseSector = false;
     uint32_t lastSector = 0;
     uint32_t currentSector = 0;
+    TOKEN_ErrCode_t err = TOKEN_ERR_OK;
     do
     {
         size = (uint16_t) fread(tmpBuf, 1, sizeof(tmpBuf), fp);
@@ -90,13 +93,13 @@ static void programToken(void)
         {
             lastSector = (addr - 1) / TOKEN_FLASH_SECTOR_LEN;
             currentSector = (addr + size) / TOKEN_FLASH_SECTOR_LEN;
-            if(currentSector > lastSector)
-            {
-                TokenFlash_Erase(currentSector*TOKEN_FLASH_SECTOR_LEN, TOKEN_FLASH_SECTOR_LEN);
-                Timer_Sleep(TOKEN_FLASH_ERASE_SECTOR_TIME);
-            }
-            passed = Test_WriteAndVerify(TOK_F_WRITE, TOK_F_READ, addr, size);
-            if(!passed)
+//            if(currentSector > lastSector)
+//            {
+//                TokenFlash_Erase(currentSector*TOKEN_FLASH_SECTOR_LEN, TOKEN_FLASH_SECTOR_LEN);
+//                Timer_Sleep(TOKEN_FLASH_ERASE_SECTOR_TIME);
+//            }
+            err = TokenFlash_WriteAndVerify(addr, tmpBuf, size);
+            if(err != TOKEN_ERR_OK)
             {
                 printf("failed token write and verify\n");
                 FAILED();
@@ -105,7 +108,7 @@ static void programToken(void)
             addr += size;            
         }
     } while(size != 0);
-    if(passed)
+    if(err == TOKEN_ERR_OK)
     {
         PASSED();
         printf("passed token write and verify\n");

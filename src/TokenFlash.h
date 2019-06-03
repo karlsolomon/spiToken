@@ -70,6 +70,9 @@ TOKEN_ErrCode_t TokenFlash_Write(uint32_t startAddress, uint8_t* buf, uint32_t l
 // Read from Token
 TOKEN_ErrCode_t TokenFlash_Read(uint32_t address, uint8_t* buf, uint32_t len);
 
+// Write to Token and verify result
+TOKEN_ErrCode_t TokenFlash_WriteAndVerify(uint32_t startAddress, uint8_t* buf, uint32_t len);
+
 // Protect a given region of FLASH token. This will protect the highest region. 
 // So if TOKEN_FLASH_PROTECT_QUARTER is passed, only the highest quarter of 
 // memory will be protected.

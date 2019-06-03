@@ -15,6 +15,8 @@
 
 // System Includes
 #include "TypeDefs.h"
+#include <string.h>
+#include <stdio.h>
 
 // Module Includes
 #include "TokenFlash.h"
@@ -24,14 +26,14 @@
 
 // Driver Includes
 #include "spi.h"
-
+#include "Timer.h"
 
 /*******************************************************************************
  * Constants Declarations
  ******************************************************************************/
 
 #define TOKEN_FLASH_INSTRUCTION_SIZE    4
-
+#define TOKEN_FLASH_WRITE_AND_VERIFY_RETRY_COUNT 3
 
 /*******************************************************************************
  * Data Types Declarations
@@ -85,6 +87,7 @@ TOKEN_ErrCode_t TokenFlash_Erase(uint32_t address, uint32_t len)
             address += TOKEN_FLASH_SECTOR_LEN;
         }
     }
+    Timer_Sleep(3000);
     return err;
 }
 
@@ -102,6 +105,7 @@ TOKEN_ErrCode_t TokenFlash_EraseAll(void)
     TOKEN_ErrCode_t err = Token_WriteEnable();
     uint8_t opCode = TOKEN_OPCODE_FLASH_CHIP_ERASE;
     err = (TOKEN_ErrCode_t) SPI_Write(&opCode, sizeof(uint8_t));
+    Timer_Sleep(1000);
     return err;
 }
 
@@ -170,6 +174,66 @@ TOKEN_ErrCode_t TokenFlash_Write(uint32_t startAddress, uint8_t* buf, uint32_t l
             buf += writeLen;
             address += writeLen;
         }
+    }
+    return err;
+}
+
+static uint8_t readBuf[256] = {0};
+/*******************************************************************************
+ * @brief TokenFlash_WriteAndVerify
+ *
+ * Write to Token and verify result
+ *
+ * @param  > uint32_t : address to start writing to
+ *         > uint8_t* : buffer to write from
+ *         > uint32_t : length to write
+ *
+ * @return TOKEN_ErrCode_t
+ ******************************************************************************/
+TOKEN_ErrCode_t TokenFlash_WriteAndVerify(uint32_t startAddress, uint8_t* buf, uint32_t len)
+{
+    uint32_t size = 0;
+    uint32_t startLen = len;
+    uint8_t* currentBuf = buf;
+    uint32_t currentAddr = startAddress;
+    TOKEN_ErrCode_t err = TOKEN_ERR_OK;
+    while(len > 0)
+    {
+        size = MIN(len, sizeof(readBuf));
+        for(uint8_t i = 0; i < TOKEN_FLASH_WRITE_AND_VERIFY_RETRY_COUNT; i++)
+        {
+            err = TokenFlash_Write(currentAddr, currentBuf, size);
+            TokenFlash_Read(currentAddr, readBuf, size);
+            if(err == TOKEN_ERR_OK && (memcmp(currentBuf, readBuf, size) == 0))
+            {
+                currentAddr += size;
+                currentBuf += size;
+                len -= size;
+                break;
+            }
+            else
+            {
+                err = TOKEN_ERR_TIMEOUT;
+                printf("writeAndVerify err = %d\n", err);
+                printf("expected | actual\n");
+                for(uint32_t j = 0; j < (size/4); j++)
+                {
+                    printf("%08X\t%08X\n", ((uint32_t*) currentBuf)[j], ((uint32_t*) readBuf)[j]);
+                }
+            }
+        }
+        if(err != TOKEN_ERR_OK)
+        {
+            break;
+        }
+    }
+    if(err == TOKEN_ERR_OK)
+    {
+        printf("passed write & verify from 0x%08X to 0x%08X\n", startAddress, startAddress + startLen);
+    }
+    else
+    {
+        printf("failed write & verify from 0x%08X to 0x%08X w/ errCode = %d\n", startAddress, startAddress + len, err);
     }
     return err;
 }
