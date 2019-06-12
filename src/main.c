@@ -79,7 +79,7 @@ static void programToken(void)
     INPROGRESS();
     TokenFlash_EraseAllBlocking();
 
-//    TokenFlash_Erase(0, TOKEN_FLASH_SECTOR_LEN);
+ //   TokenFlash_Erase(0, TOKEN_FLASH_SECTOR_LEN);
  //   Timer_Sleep(TOKEN_FLASH_ERASE_SECTOR_TIME);
     bool passed = false;
     bool eraseSector = false;

@@ -33,7 +33,7 @@
  ******************************************************************************/
 
 #define TOKEN_FLASH_INSTRUCTION_SIZE    4
-#define TOKEN_FLASH_WRITE_AND_VERIFY_RETRY_COUNT 3
+#define TOKEN_FLASH_WRITE_AND_VERIFY_RETRY_COUNT 5
 
 /*******************************************************************************
  * Data Types Declarations
@@ -87,7 +87,6 @@ TOKEN_ErrCode_t TokenFlash_Erase(uint32_t address, uint32_t len)
             address += TOKEN_FLASH_SECTOR_LEN;
         }
     }
-    Timer_Sleep(3000);
     return err;
 }
 
@@ -105,7 +104,7 @@ TOKEN_ErrCode_t TokenFlash_EraseAll(void)
     TOKEN_ErrCode_t err = Token_WriteEnable();
     uint8_t opCode = TOKEN_OPCODE_FLASH_CHIP_ERASE;
     err = (TOKEN_ErrCode_t) SPI_Write(&opCode, sizeof(uint8_t));
-    Timer_Sleep(1000);
+    Timer_Sleep(10000);
     return err;
 }
 
@@ -213,13 +212,14 @@ TOKEN_ErrCode_t TokenFlash_WriteAndVerify(uint32_t startAddress, uint8_t* buf, u
             }
             else
             {
-                err = TOKEN_ERR_TIMEOUT;
                 printf("writeAndVerify err = %d\n", err);
+                err = TOKEN_ERR_TIMEOUT;
                 printf("expected | actual\n");
                 for(uint32_t j = 0; j < (size/4); j++)
                 {
                     printf("%08X\t%08X\n", ((uint32_t*) currentBuf)[j], ((uint32_t*) readBuf)[j]);
                 }
+                Timer_Sleep(10);
             }
         }
         if(err != TOKEN_ERR_OK)
